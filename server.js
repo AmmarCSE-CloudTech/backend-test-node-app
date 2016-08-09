@@ -1,7 +1,7 @@
 import express from 'express'
 import {router} from './app/server/router'
 
-let app = express();
-router(app);
+let app = express()
+router(app)
 
-//module.exports = app;
+//module.exports = app
