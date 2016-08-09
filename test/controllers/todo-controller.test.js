@@ -1,24 +1,25 @@
 import chai from 'chai'
 import should from 'should'
 import request from 'supertest'
-import {init, app} from '../../init-app'
+import {init} from '../../init-app'
 
 init(true)
 
+import {app} from '../../init-app'
 let expect = chai.expect
 let deepEqual = chai.deepEqual
 
 //var TodoModel = require('../../app/data/todo-model')
 
-describe('TodoController testing', function () {
-	describe('Insert Todo Test', function () {
-		it('Should add todo', function (done) {
+describe('TodoController testing', () => {
+	describe('Insert Todo Test', () => {
+		it('Should add todo', (done) =>{
             let insertTodo = sample
             request(app)
                 .post('/api/todo')
-                .send({body: insertTodo})
+                .send(insertTodo)
                 .expect(200)
-                .end(function(err, res){
+                .end((err, res) => {
                     if(err) {
                         done(err)
                     } else {
@@ -29,10 +30,52 @@ describe('TodoController testing', function () {
 		})
 	})
 
+	describe('Get Todo Test', () => {
+		it('Should get todo', (done) => {
+            //first insert todo
+            //then try 'getting' it
+            let insertTodo = sample
+            request(app)
+                .post('/api/todo')
+                .send(insertTodo)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) {
+                        done(err)
+                    } 
+                    else {
+                        res.body.should.have.property('todo').with.property('_id')
+
+                        request(app)
+                            .get('/api/todo')
+                            .query('id='+res.body.todo._id)
+                            .expect(200)
+                            .end((err, res) => {
+                                if(err) {
+                                    done(err)
+                                } else {
+                                    //yes, the following is ugly
+                                    //unfortunately, there is not way to do 'properties' chaining
+                                    //see: https://github.com/chaijs/chai/issues/72
+                                    expect(res.body)
+                                        .to.have.property('todo')
+                                        .with.property('text', 'test')
+                                    expect(res.body)
+                                        .to.have.property('todo')
+                                        .with.property('userId', 1)
+
+                                    done()
+                                }
+                            })
+                    }
+                })
+		})
+	})
 })
 
 let sample = {
     added: Date.now(),
     userId: 1,
-    text: 'insert test'
+    text: 'test',
+    completed: true
 }

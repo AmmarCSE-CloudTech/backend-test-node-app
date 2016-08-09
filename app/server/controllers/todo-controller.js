@@ -1,7 +1,7 @@
 import {find, add} from '../../data/data-agent'
 
 export function GetTodo(req, res, next){
-    find(req.params.todo_id, todo => res.send('Hellow world'))
+    find(req.query.id, todo => res.send({status: true, todo}))
 }
 
 export function PostTodo(req, res, next){

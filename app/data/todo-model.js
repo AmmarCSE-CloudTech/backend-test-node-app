@@ -2,7 +2,8 @@ import mongoose from 'mongoose'
 let Schema = mongoose.Schema
 
 const TodoSchema = new Schema({
-	text: String,
+	text: { type: String },
+	userId: { type: Number },
 	completed: { type:Boolean, default: false },
 	added: { type: Date, default: Date.now }
 })
