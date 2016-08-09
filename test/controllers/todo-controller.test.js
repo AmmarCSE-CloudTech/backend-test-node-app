@@ -1,29 +1,38 @@
-import mongoose from 'mongoose'
 import chai from 'chai'
-import {GetTodo, PostTodo} from '../../app/server/controllers/todo-controller'
+import should from 'should'
+import request from 'supertest'
+import {init, app} from '../../init-app'
+
+init(true)
 
 let expect = chai.expect
 let deepEqual = chai.deepEqual
 
-var TodoModel = require('../../app/data/todo-model')
+//var TodoModel = require('../../app/data/todo-model')
 
 describe('TodoController testing', function () {
 	describe('Insert Todo Test', function () {
 		it('Should add todo', function (done) {
             let insertTodo = sample
-            insertTodo = PostTodo(insertTodo)
-            
-            let actualTodo = GetTodo(insertTodo.id)
-
-            assert.deepEqual(insertTodo, actualTodo)
-
-            done()
+            request(app)
+                .post('/api/todo')
+                .send({body: insertTodo})
+                .expect(200)
+                .end(function(err, res){
+                    if(err) {
+                        done(err)
+                    } else {
+                        res.body.should.have.property('todo').with.property('_id')
+                        done()
+                    }
+                })
 		})
 	})
+
 })
 
 let sample = {
-    added: Date.now,
+    added: Date.now(),
     userId: 1,
     text: 'insert test'
 }
