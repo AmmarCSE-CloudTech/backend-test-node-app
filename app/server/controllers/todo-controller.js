@@ -1,33 +1,28 @@
 import {find, add, update, remove} from '../../data/data-agent'
 
 export function GetTodo(req, res, next){
-    find(req.query.id, todo => res.send({status: true, todo}))
+    find(req.query.id, responseCallback(res))
 }
 
 export function PostTodo(req, res, next){
-    add(req.body, result => {
-            if(result._id){
-                res.send({status: true, todo: result})
-            }
-            else{
-                res.json({status: false, error: err.message})
-            }
-        }
-    )
+    add(req.body, responseCallback(res))
 }
 
 export function PutTodo(req, res, next){
-    update(req.body, result => {
-            if(result._id){
-                res.send({status: true, todo: result})
-            }
-            else{
-                res.json({status: false, error: err.message})
-            }
-        }
-    )
+    update(req.body, responseCallback(res))
 }
 
 export function DeleteTodo(req, res, next){
-    remove(req.query.id, todo => res.send({status: true, todo}))
+    remove(req.query.id, responseCallback(res))
 }
+
+//curried 
+let responseCallback = res => 
+    (err, todo) => {
+        if(err){
+            res.json({status: false, error: err.message})
+        }
+        else{
+            res.send({status: true, todo: todo})
+        }
+    }
