@@ -124,6 +124,42 @@ describe('TodoController testing', () => {
                 })
 		})
 	})
+
+	describe('Delete Todo Test', () => {
+		it('Should delete todo', (done) => {
+            //first insert todo
+            //then try deleting it
+            let insertTodo = sample
+            request(app)
+                .post('/api/todo')
+                .send(insertTodo)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) {
+                        done(err)
+                    } 
+                    else {
+                        res.body.should.have.property('todo').with.property('_id')
+
+                        let deleteTodoId = res.body.todo._id
+                        request(app)
+                            .delete('/api/todo')
+                            .query('id='+deleteTodoid)
+                            .expect(200)
+                            .end((err, res) => {
+                                if(err) {
+                                    done(err)
+                                } else {
+                                    expect(res.body)
+                                        .to.have.property('status', true)
+
+                                    done()
+                                }
+                            })
+                    }
+                })
+		})
+	})
 })
 
 let sample = {
