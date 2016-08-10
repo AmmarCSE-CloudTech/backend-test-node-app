@@ -89,15 +89,19 @@ describe('TodoController testing', () => {
                     } 
                     else {
                         res.body.should.have.property('todo').with.property('_id')
-                        let todo = res.body.todo
-                        todo.text = 'update test'
-                        todo.completed = false
+
+                        let updateTodo = res.body.todo
+                        updateTodo.text = 'update test'
+                        updateTodo.completed = false
+
+                        //need to set to Date object since it is current date string
+                        updateTodo.added = new Date(updateTodo.added)
                         //add one day
-                        todo.added.setTime( todo.added.getTime() + ONE_DAY);
+                        updateTodo.added.setTime( updateTodo.added.getTime() + ONE_DAY);
 
                         request(app)
                             .put('/api/todo')
-                            .send(todo)
+                            .send(updateTodo)
                             .expect(200)
                             .end((err, res) => {
                                 if(err) {
@@ -111,7 +115,7 @@ describe('TodoController testing', () => {
                                         .with.property('completed', false)
                                     expect(res.body)
                                         .to.have.property('todo')
-                                        .with.property('added',  sample.added.getTime() + ONE_DAY) 
+                                        .with.property('added',  new Date(sample.added.getTime() + ONE_DAY).toISOString()) 
 
                                     done()
                                 }
