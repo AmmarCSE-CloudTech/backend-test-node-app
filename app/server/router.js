@@ -1,4 +1,4 @@
-import {GetTodo, PostTodo, PutTodo} from './controllers/todo-controller'
+import {GetTodo, PostTodo, PutTodo, DeleteTodo} from './controllers/todo-controller'
 
 export function router(app){
 	app.get('/api/todo', GetTodo);
@@ -6,4 +6,6 @@ export function router(app){
 	app.post('/api/todo', PostTodo);
 
 	app.put('/api/todo', PutTodo);
+
+	app.delete('/api/todo', DeleteTodo);
 }

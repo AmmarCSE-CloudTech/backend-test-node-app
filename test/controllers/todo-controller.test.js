@@ -144,7 +144,7 @@ describe('TodoController testing', () => {
                         let deleteTodoId = res.body.todo._id
                         request(app)
                             .delete('/api/todo')
-                            .query('id='+deleteTodoid)
+                            .query('id='+deleteTodoId)
                             .expect(200)
                             .end((err, res) => {
                                 if(err) {

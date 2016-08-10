@@ -1,4 +1,4 @@
-import {find, add, update} from '../../data/data-agent'
+import {find, add, update, remove} from '../../data/data-agent'
 
 export function GetTodo(req, res, next){
     find(req.query.id, todo => res.send({status: true, todo}))
@@ -26,4 +26,8 @@ export function PutTodo(req, res, next){
             }
         }
     )
+}
+
+export function DeleteTodo(req, res, next){
+    remove(req.query.id, todo => res.send({status: true, todo}))
 }

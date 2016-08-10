@@ -18,3 +18,7 @@ export function update(updateTodo, callback){
         todo.save((err, todo) => callback(err || todo)/*todo will be shadowed here from the arrow function param*/)
     });
 }
+
+export function remove(id, callback){
+    Todo.remove({_id : id }, (err, todo) => { callback(todo) })
+}
