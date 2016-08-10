@@ -1,7 +1,7 @@
 import {Todo} from './todo-model'
 
 export function find(id, callback){
-    Todo.findById(id, function(err, todo) { callback(todo) })
+    Todo.findById(id, (err, todo) => { callback(todo) })
 }
 
 export function add(todo, callback){
