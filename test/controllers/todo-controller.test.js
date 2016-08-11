@@ -1,30 +1,80 @@
 import chai from 'chai'
 import should from 'should'
 import request from 'supertest'
-import {init} from '../../init-app'
+import {init, app} from '../../init-app'
+
+let expect = chai.expect
 
 init(true)
 
-import {app} from '../../init-app'
-let expect = chai.expect
-let deepEqual = chai.deepEqual
-
 const ONE_DAY = 86400000
 
-//var TodoModel = require('../../app/data/todo-model')
+/*request(app)
+    .post('/api/todo')
+    .send(insertTodo)
+    .expect(200)
+    .end((err, res) => {
+        if(err) {
+            done(err)
+        } else {
+            res.body.should.have.property('todo').with.property('_id')
+            done()
+        }
+    })*/
+
+let sample = {
+    added: new Date('08-04-2016'),
+    userId: 1,
+    text: 'test',
+    completed: true
+}
+let token
+
+function loginUser() {
+    return (done) => {
+        let userGuid = guid()
+        request(app)
+            .post('/account/register')
+            .send({ username: userGuid, password: userGuid})
+            .expect(200)
+            .end((err, res) => {
+                if (err){
+                    done(err)
+                }
+                else{
+                    request(app)
+                        .post('/account/signin')
+                        .send({ username: userGuid, password: userGuid})
+                        .expect(200)
+                        .end((err, res) => {
+                            if (err){
+                                done(err)
+                            }
+                            else{
+                                token = res.body.token
+                                done()
+                            }
+                        })
+                }
+            })
+    }
+}
 
 describe('TodoController testing', () => {
+    it('login', loginUser())
 	describe('Insert Todo Test', () => {
 		it('Should add todo', (done) =>{
             let insertTodo = sample
             request(app)
                 .post('/api/todo')
+                .set('x-access-token', token)
                 .send(insertTodo)
                 .expect(200)
                 .end((err, res) => {
                     if(err) {
                         done(err)
-                    } else {
+                    } 
+                    else {
                         res.body.should.have.property('todo').with.property('_id')
                         done()
                     }
@@ -39,6 +89,7 @@ describe('TodoController testing', () => {
             let insertTodo = sample
             request(app)
                 .post('/api/todo')
+                .set('x-access-token', token)
                 .send(insertTodo)
                 .expect(200)
                 .end((err, res) => {
@@ -50,12 +101,14 @@ describe('TodoController testing', () => {
 
                         request(app)
                             .get('/api/todo')
+                            .set('x-access-token', token)
                             .query('id='+res.body.todo._id)
                             .expect(200)
                             .end((err, res) => {
                                 if(err) {
                                     done(err)
-                                } else {
+                                } 
+                                else {
                                     //yes, the following is ugly
                                     //unfortunately, there is not way to do 'properties' chaining
                                     //see: https://github.com/chaijs/chai/issues/72
@@ -81,6 +134,7 @@ describe('TodoController testing', () => {
             let insertTodo = sample
             request(app)
                 .post('/api/todo')
+                .set('x-access-token', token)
                 .send(insertTodo)
                 .expect(200)
                 .end((err, res) => {
@@ -101,12 +155,14 @@ describe('TodoController testing', () => {
 
                         request(app)
                             .put('/api/todo')
+                            .set('x-access-token', token)
                             .send(updateTodo)
                             .expect(200)
                             .end((err, res) => {
                                 if(err) {
                                     done(err)
-                                } else {
+                                } 
+                                else {
                                     expect(res.body)
                                         .to.have.property('todo')
                                         .with.property('text', 'update test')
@@ -132,6 +188,7 @@ describe('TodoController testing', () => {
             let insertTodo = sample
             request(app)
                 .post('/api/todo')
+                .set('x-access-token', token)
                 .send(insertTodo)
                 .expect(200)
                 .end((err, res) => {
@@ -144,12 +201,14 @@ describe('TodoController testing', () => {
                         let deleteTodoId = res.body.todo._id
                         request(app)
                             .delete('/api/todo')
+                            .set('x-access-token', token)
                             .query('id='+deleteTodoId)
                             .expect(200)
                             .end((err, res) => {
                                 if(err) {
                                     done(err)
-                                } else {
+                                } 
+                                else {
                                     expect(res.body)
                                         .to.have.property('status', true)
 
@@ -162,9 +221,12 @@ describe('TodoController testing', () => {
 	})
 })
 
-let sample = {
-    added: new Date('08-04-2016'),
-    userId: 1,
-    text: 'test',
-    completed: true
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
 }

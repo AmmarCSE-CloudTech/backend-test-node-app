@@ -4,7 +4,7 @@ import {GetTodo, PostTodo, PutTodo, DeleteTodo} from '../controllers/todo-contro
 import authenticate from './authenticator'
 
 export function routeAccount(app){
-	app.get('/account/register', Register);
+	app.post('/account/register', Register);
 
 	app.post('/account/signin', SignIn);
 }

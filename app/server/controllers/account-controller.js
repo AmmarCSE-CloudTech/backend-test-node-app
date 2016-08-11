@@ -1,12 +1,13 @@
-import {add} from '../../data/user-agent'
-import {jwt} from 'jsonwebtoken'
+import {config} from '../../config'
+import {add, find} from '../../data/user-agent'
+import jwt from 'jsonwebtoken'
 
 export function Register(req, res, next){
     add(req.body, responseCallback(res))
 }
 
 export function SignIn(req, res, next){
-    (err, user) => {
+    find(req.body, (err, user) => {
         if(err){
             res.json({status: false, error: err.message})
         }
@@ -18,12 +19,12 @@ export function SignIn(req, res, next){
         }
         //ok, were good
         else{
-            let token = jwt.sign(user, app.get('tokenSecret'), {
-              expiresInMinutes: 1440 // expires in 24 hours
+            let token = jwt.sign(user, config.tokenSecret, {
+              expiresIn: 24*60*60 // expires in 24 hours
             })
             res.json({status: true, token})
         }
-    }
+    })
 }
 
 //curried 

@@ -1,11 +1,12 @@
-import {jwt} from 'jsonwebtoken'
+import {config} from '../../config'
+import jwt from 'jsonwebtoken'
 
 export default function authenticate(req, res, next){
     //only allow tokens via limited methods or sources
     let token = req.body.token || req.query.token || req.headers['x-access-token']
 
     if(token){
-        jwt.verify(token, app.get('tokenSecret'), (err, decoded) => {
+        jwt.verify(token, config.tokenSecret, (err, decoded) => {
             if(err){
                 return res.json({status: false, message: 'Token authentication failed.'})
             }

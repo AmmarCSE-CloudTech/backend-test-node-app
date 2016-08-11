@@ -7,5 +7,9 @@ export function add(user, callback){
     newUser.save(callbackCurry(callback))
 }
 
+export function find(user, callback){
+    User.findOne(user, callbackCurry(callback))
+}
+
 let callbackCurry = callback =>
     (err, user) => callback(err, user)
