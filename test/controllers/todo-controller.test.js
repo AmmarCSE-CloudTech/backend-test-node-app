@@ -1,14 +1,14 @@
 import chai from 'chai'
 import should from 'should'
 import request from 'supertest'
-import {init, app} from '../../init-app'
+import {init, app} from '../../app/init-app'
 
 let expect = chai.expect
 
+//true for testing flag
 init(true)
 
 const ONE_DAY = 86400000
-
 
 let token
 let sample = {
@@ -19,13 +19,16 @@ let sample = {
 
 function loginUser() {
     return (done) => {
+        //come up with some arbitrary id for test userr
         let userGuid = guid()
+
         request(app)
             .post('/account/register')
             .send({ username: userGuid, password: userGuid})
             .expect(200)
             .end((err, res) => {
                 if (err){
+                    //uh-oh, registration failed
                     done(err)
                 }
                 else{
@@ -35,6 +38,7 @@ function loginUser() {
                         .expect(200)
                         .end((err, res) => {
                             if (err){
+                                //could also be for authentication failure in real life situation
                                 done(err)
                             }
                             else{
@@ -48,10 +52,12 @@ function loginUser() {
 }
 
 describe('TodoController testing', () => {
+    //need to login first, otherwise test will fail with 403 forbidden error
     it('login', loginUser())
 	describe('Insert Todo Test', () => {
 		it('Should add todo', (done) =>{
             let insertTodo = sample
+
             request(app)
                 .post('/api/todo')
                 .set('x-access-token', token)
@@ -62,6 +68,7 @@ describe('TodoController testing', () => {
                         done(err)
                     } 
                     else {
+                        //id check will suffice since mongodb will have attached it and the property did not exist beforehand
                         res.body.should.have.property('todo').with.property('_id')
                         done()
                     }
@@ -84,6 +91,7 @@ describe('TodoController testing', () => {
                         done(err)
                     } 
                     else {
+                        //insert cleared
                         res.body.should.have.property('todo').with.property('_id')
 
                         request(app)
@@ -159,6 +167,7 @@ describe('TodoController testing', () => {
                                     expect(res.body)
                                         .to.have.property('todo')
                                         .with.property('completed', false)
+                                    //need to reconstruct date object to get string since it is returned in epoch form
                                     expect(res.body)
                                         .to.have.property('todo')
                                         .with.property('added',  new Date(sample.added.getTime() + ONE_DAY).toISOString()) 
@@ -199,6 +208,7 @@ describe('TodoController testing', () => {
                                     done(err)
                                 } 
                                 else {
+                                    //this will go for both when the todo has been deleted or when it wasnt found in the first place
                                     expect(res.body)
                                         .to.have.property('status', true)
 
@@ -211,6 +221,7 @@ describe('TodoController testing', () => {
 	})
 })
 
+//http://stackoverflow.com/a/105074/3474494
 function guid() {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)

@@ -1,9 +1,9 @@
 //centralize app initialization for both serving and testing
 
 import express from 'express'
-import {routeAccount, routeApi} from './app/server/middleware/router'
+import {routeAccount, routeApi} from './server/middleware/router'
 import mongoose from 'mongoose'
-import {config} from './app/config'
+import {config} from './config'
 import bodyParser from 'body-parser'
 
 export let app = express()
@@ -14,6 +14,7 @@ export function init(testing = false){
       extended: true
     })); 
 
+    //route separately in order to add authentication only to api end-points
     routeAccount(app)
     routeApi(app)
 
@@ -22,6 +23,7 @@ export function init(testing = false){
       console.log('Mongoose default connection open to ' + config.db);
     })
 
+    //if were test, there is no need to listen
     if(!testing){
         app.listen(config.test_port);
         console.log("App listening on port "+config.test_port);

@@ -1,6 +1,17 @@
+import jwt from 'jsonwebtoken'
 import {config} from '../../config'
 import {add, find} from '../../data/user-agent'
-import jwt from 'jsonwebtoken'
+
+//curry so that the 'res' object is available within the mongoose callback
+let responseCallback = res => 
+    (err, user) => {
+        if(err){
+            res.json({status: false, error: err.message})
+        }
+        else{
+            res.send({status: true, user})
+        }
+    }
 
 export function Register(req, res, next){
     add(req.body, responseCallback(res))
@@ -26,14 +37,3 @@ export function SignIn(req, res, next){
         }
     })
 }
-
-//curried 
-let responseCallback = res => 
-    (err, user) => {
-        if(err){
-            res.json({status: false, error: err.message})
-        }
-        else{
-            res.send({status: true, user})
-        }
-    }
