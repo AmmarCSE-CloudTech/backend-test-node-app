@@ -1,9 +1,9 @@
 //centralize app initialization for both serving and testing
 
 import express from 'express'
-import {router} from './app/server/router'
+import {routeAccount, routeApi} from './app/server/middleware/router'
 import mongoose from 'mongoose'
-import config from './app/config'
+import {config} from './app/config'
 import bodyParser from 'body-parser'
 
 export let app = express()
@@ -16,7 +16,8 @@ export function init(testing = false){
       extended: true
     })); 
 
-    router(app)
+    routeAccount(app)
+    routeApi(app)
 
     mongoose.connect(config.test_db)
     mongoose.connection.on('connected', function () {
