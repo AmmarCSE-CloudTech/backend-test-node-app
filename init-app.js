@@ -1,4 +1,4 @@
-//centralize app initiation for both serving and testing
+//centralize app initialization for both serving and testing
 
 import express from 'express'
 import {router} from './app/server/router'
@@ -9,6 +9,8 @@ import bodyParser from 'body-parser'
 export let app = express()
 
 export function init(testing = false){
+    app.set('tokenSecret', config.tokenSecret)
+
     app.use( bodyParser.json() );       // to support JSON-encoded bodies
     app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
       extended: true

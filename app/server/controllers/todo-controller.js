@@ -1,4 +1,4 @@
-import {find, add, update, remove} from '../../data/data-agent'
+import {find, add, update, remove} from '../../data/todo-agent'
 
 export function GetTodo(req, res, next){
     find(req.query.id, responseCallback(res))
@@ -23,6 +23,6 @@ let responseCallback = res =>
             res.json({status: false, error: err.message})
         }
         else{
-            res.send({status: true, todo: todo})
+            res.send({status: true, todo})
         }
     }
