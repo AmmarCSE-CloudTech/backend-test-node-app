@@ -9,26 +9,13 @@ init(true)
 
 const ONE_DAY = 86400000
 
-/*request(app)
-    .post('/api/todo')
-    .send(insertTodo)
-    .expect(200)
-    .end((err, res) => {
-        if(err) {
-            done(err)
-        } else {
-            res.body.should.have.property('todo').with.property('_id')
-            done()
-        }
-    })*/
 
+let token
 let sample = {
     added: new Date('08-04-2016'),
-    userId: 1,
     text: 'test',
     completed: true
 }
-let token
 
 function loginUser() {
     return (done) => {
@@ -110,14 +97,17 @@ describe('TodoController testing', () => {
                                 } 
                                 else {
                                     //yes, the following is ugly
-                                    //unfortunately, there is not way to do 'properties' chaining
+                                    //unfortunately, there is no way to do 'properties' chaining
                                     //see: https://github.com/chaijs/chai/issues/72
                                     expect(res.body)
                                         .to.have.property('todo')
                                         .with.property('text', 'test')
                                     expect(res.body)
                                         .to.have.property('todo')
-                                        .with.property('userId', 1)
+                                        .with.property('completed', true)
+                                    expect(res.body)
+                                        .to.have.property('todo')
+                                        .with.property('added',  new Date(sample.added.getTime()).toISOString()) 
 
                                     done()
                                 }

@@ -11,8 +11,8 @@ export default function authenticate(req, res, next){
                 return res.json({status: false, message: 'Token authentication failed.'})
             }
 
-            //attach to request for later use
-            req.decoded = decoded
+            //attach to request for later use and identification
+            req.user = decoded._doc
             next()
         })
     }

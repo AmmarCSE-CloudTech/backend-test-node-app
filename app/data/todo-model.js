@@ -3,7 +3,7 @@ let Schema = mongoose.Schema
 
 const TodoSchema = new Schema({
 	text: { type: String },
-	userId: { type: Number },
+	userId: { type: String },
 	completed: { type:Boolean, default: false },
 	added: { type: Date, default: Date.now }
 })
